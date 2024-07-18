@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            width: 300px;
+        }
+        .header {
+            background-color: #6c757d;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+        }
+        .tasks {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .task {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+        }
+        .task:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        .task input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .task-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .task-actions button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .task-actions .task-edit {
+            background-color: #ffc107; /* yellow color for edit */
+        }
+        .task-actions .task-save {
+            background-color: #28a745; /* green color for save */
+            display: none;
+        }
+        .task-actions .task-delete {
+            background-color: #dc3545; /* red color for delete */
+        }
+        .task-actions button:hover {
+            opacity: 0.9;
+        }
+        .add-task {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .add-task input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .add-task button {
+            background-color: #007bff; /* blue color for add */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-left: 5px;
+            border-radius: 4px;
+        }
+        .add-task button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function enableEdit(taskId) {
+            const taskInput = document.getElementById('task-input-' + taskId);
+            taskInput.removeAttribute('readonly');
+            taskInput.focus();
+            document.getElementById('edit-button-' + taskId).style.display = 'none';
+            document.getElementById('save-button-' + taskId).style.display = 'inline';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Todo List</h2>
+        </div>
+        <ul class="tasks">
+            {% for task in tasks %}
+                <li class="task">
+                    <form action="{{ url_for('update', task_id=task[0]) }}" method="post" style="display: inline;">
+                        <input type="text" id="task-input-{{ task[0] }}" name="task" value="{{ task[1] }}" readonly required>
+                        <div class="task-actions">
+                            <button type="submit" id="save-button-{{ task[0] }}" class="task-save">Save</button>
+                            <button type="button" id="edit-button-{{ task[0] }}" class="task-edit" onclick="enableEdit({{ task[0] }})">Edit</button>
+                        </div>
+                    </form>
+                    <form action="{{ url_for('delete', task_id=task[0]) }}" method="post" style="display: inline;">
+                        <button type="submit" class="task-delete">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <form class="add-task" action="{{ url_for('add') }}" method="post">
+            <input type="text" name="task" placeholder="Add a new task" required>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</body>
+</html>
